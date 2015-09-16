@@ -14,8 +14,9 @@ router.post('/post', function (req, res) {
 	restClient.post(options, req, res);
 });
 
-router.get('/get', function(req, res, next) {
-  restClient.get("http://jia-tuku.suryani.cn/hybrid/user/get?userId=6183863", req, res);
+router.get('/get/:id', function(req, res, next) {
+	var url = "http://jia-tuku.suryani.cn/hybrid/user/get?userId=" + req.params.id;
+    restClient.get(url, req, res);
 });
 
 module.exports = router;
