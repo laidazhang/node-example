@@ -26,10 +26,8 @@ RestClient.prototype.post = function (options, req, res) {
 				'Content-Length': postData.length
 				}
 		};
-	console.log(options);	
+	//console.log(options);	
 	var requestOptions = merge(options, defaultOptions);
-		console.log(postData);
-		
 	var resquest = http.request(requestOptions, function(response) {
 	  console.log('STATUS: ' + response.statusCode);
 	  response.setEncoding('utf8');
@@ -50,16 +48,29 @@ RestClient.prototype.post = function (options, req, res) {
 }
 
 RestClient.prototype.get = function(url, req, res) {
-	http.get(url, function (response) { 
-		var data = "";
-		response.on("data", function (chunk) {
+	var options = {
+			  hostname: 'jia-tuku.suryani.cn',
+			  path: url,
+			  //port: 8080,
+			  method: 'GET'
+		};
+	//console.log(options);	
+	var resquest = http.request(options, function(response) {
+	  console.log('STATUS: ' + response.statusCode);
+	  response.setEncoding('utf8');
+	  var data = "";
+	  response.on('data', function (chunk) {
 		data += chunk;
-		}); 
-
-		response.on("end", function (err) {
-			res.send(JSON.parse(data));
-		}); 
-	}); 
+	  });
+	  response.on('end', function() {
+		res.send(JSON.parse(data));
+	  })
+	});
+	
+	resquest.on('error', function(e) {
+		console.log('problem with request: ' + e.message);
+	});
+	resquest.end();
 }
 
 module.exports = RestClient;
