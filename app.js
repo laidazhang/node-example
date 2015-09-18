@@ -63,7 +63,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.listen(8888,function(){
-    console.log("Server Start!");
+    console.log("Server Start on " + app.get('env'));
 });
 
 module.exports = app;

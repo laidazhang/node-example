@@ -1,4 +1,5 @@
 var http = require("http");
+var config = require("./configs");
 
 var RestClient = function() {
 };
@@ -18,7 +19,7 @@ var merge = function (jsonbject1, jsonbject2) {
 RestClient.prototype.post = function (options, req, res) {
 	var postData = JSON.stringify(req.body);
 	var defaultOptions = {
-			  hostname: 'jia-tuku.suryani.cn',
+			  hostname: config.host,
 			  //port: 8080,
 			  method: 'POST',
 			  headers: {
@@ -49,12 +50,12 @@ RestClient.prototype.post = function (options, req, res) {
 
 RestClient.prototype.get = function(url, req, res) {
 	var options = {
-			  hostname: 'jia-tuku.suryani.cn',
+			  hostname: config.host,
 			  path: url,
 			  //port: 8080,
 			  method: 'GET'
 		};
-	//console.log(options);	
+	console.log(options);	
 	var resquest = http.request(options, function(response) {
 	  console.log('STATUS: ' + response.statusCode);
 	  response.setEncoding('utf8');
