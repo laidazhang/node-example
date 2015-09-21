@@ -1,5 +1,6 @@
 var http = require("http");
 var config = require("./configs");
+var logger = require('./configs/log').logger('restful');
 
 var RestClient = function() {
 };
@@ -27,10 +28,8 @@ RestClient.prototype.post = function (options, req, res) {
 				'Content-Length': postData.length
 				}
 		};
-	//console.log(options);	
 	var requestOptions = merge(options, defaultOptions);
 	var resquest = http.request(requestOptions, function(response) {
-	  console.log('STATUS: ' + response.statusCode);
 	  response.setEncoding('utf8');
 	  var data = "";
 	  response.on('data', function (chunk) {
@@ -42,7 +41,7 @@ RestClient.prototype.post = function (options, req, res) {
 	});
 	
 	resquest.on('error', function(e) {
-		console.log('problem with request: ' + e.message);
+		logger.error('problem with request: ' + e.message);
 	});
 	resquest.write(postData);
 	resquest.end();
@@ -55,9 +54,7 @@ RestClient.prototype.get = function(url, req, res) {
 			  //port: 8080,
 			  method: 'GET'
 		};
-	console.log(options);	
 	var resquest = http.request(options, function(response) {
-	  console.log('STATUS: ' + response.statusCode);
 	  response.setEncoding('utf8');
 	  var data = "";
 	  response.on('data', function (chunk) {
@@ -69,7 +66,7 @@ RestClient.prototype.get = function(url, req, res) {
 	});
 	
 	resquest.on('error', function(e) {
-		console.log('problem with request: ' + e.message);
+		logger.error('problem with request: ' + e.message);
 	});
 	resquest.end();
 }
