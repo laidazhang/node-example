@@ -17,6 +17,28 @@ var merge = function (jsonbject1, jsonbject2) {
 	return resultJsonObject;  
 };  
 
+var request = function(options, req, res) {
+	return http.request(options, function(response) {
+	  response.setEncoding('utf8');
+	  var data = "";
+	  response.on('data', function (chunk) {
+		data += chunk;
+	  });
+	  response.on('end', function() {
+		res.status(response.statusCode);
+		if (response.statusCode === 500) {
+			logger.error(data);
+			res.send({"status":"failed", "message": "call api failed."})
+		} else if (response.statusCode === 404) {
+			logger.error(data);
+			res.send({"status":"failed", "message": "api not found."})
+		} else {
+			res.send(JSON.parse(data));
+		}
+	  });
+	});
+}
+
 RestClient.prototype.post = function (options, req, res) {
 	var postData = JSON.stringify(req.body);
 	var defaultOptions = {
@@ -28,17 +50,8 @@ RestClient.prototype.post = function (options, req, res) {
 				'Content-Length': postData.length
 				}
 		};
-	var requestOptions = merge(options, defaultOptions);
-	var resquest = http.request(requestOptions, function(response) {
-	  response.setEncoding('utf8');
-	  var data = "";
-	  response.on('data', function (chunk) {
-		data += chunk;
-	  });
-	  response.on('end', function() {
-		res.send(JSON.parse(data));
-	  })
-	});
+	var mergedOptions = merge(options, defaultOptions);
+	var resquest = request(mergedOptions, req, res);
 	
 	resquest.on('error', function(e) {
 		logger.error('problem with request: ' + e.message);
@@ -54,16 +67,7 @@ RestClient.prototype.get = function(url, req, res) {
 			  //port: 8080,
 			  method: 'GET'
 		};
-	var resquest = http.request(options, function(response) {
-	  response.setEncoding('utf8');
-	  var data = "";
-	  response.on('data', function (chunk) {
-		data += chunk;
-	  });
-	  response.on('end', function() {
-		res.send(JSON.parse(data));
-	  })
-	});
+	var resquest = request(options, req, res);
 	
 	resquest.on('error', function(e) {
 		logger.error('problem with request: ' + e.message);
